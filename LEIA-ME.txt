@@ -1,0 +1,307 @@
+==================================================================
+ RECESSO — controle de férias e ausências
+ Guia rápido de instalação (Windows Server)
+==================================================================
+
+Este é o mesmo sistema "Recesso" que você já usava, só que agora
+ele roda direto neste computador (servidor), sem precisar de
+internet nem do Claude. Os outros computadores da empresa acessam
+pela rede interna, pelo navegador.
+
+
+----------------------------------------------------------------
+1) O QUE VOCÊ PRECISA TER NO SERVIDOR
+----------------------------------------------------------------
+- Python já instalado (você me disse que o servidor já tem o
+  Python 3.14.7 instalado — ótimo, não precisa instalar nada
+  disso).
+- Esta pasta "recesso-app" copiada para dentro do servidor, por
+  exemplo em:
+      C:\Recesso\recesso-app
+
+Dentro dela você vai encontrar:
+  app.py              -> o programa principal (o servidor)
+  requirements.txt     -> lista de "peças" que o Python precisa
+                          instalar antes de rodar
+  templates\           -> a página do sistema
+  static\               -> visual (cores, estilo) e o
+                          funcionamento (JavaScript) da página
+  LEIA-ME.txt          -> este arquivo
+
+
+----------------------------------------------------------------
+2) ESCOLHA COMO RODAR: .EXE (mais fácil) OU COM PYTHON
+----------------------------------------------------------------
+Tem dois jeitos de rodar o Recesso. Escolha um:
+
+  OPÇÃO A — gerar um "app.exe" (igual o banco de horas) — a mais
+  fácil no dia a dia, mas precisa de um passo extra UMA VEZ SÓ.
+  Veja a seção "2A" logo abaixo.
+
+  OPÇÃO B — rodar direto com "python app.py" toda vez — sem passo
+  extra, mas precisa deixar uma janela de Prompt de Comando aberta
+  sempre. Veja a seção "2B" mais abaixo.
+
+Se ficou em dúvida, use a OPÇÃO A: depois de pronta, funciona
+igualzinho ao "banco de horas" — dois cliques no app.exe e o
+navegador já abre sozinho.
+
+
+----------------------------------------------------------------
+2A) OPÇÃO A — GERAR O app.exe (fazer só UMA VEZ, no servidor)
+----------------------------------------------------------------
+1. Abra o "Prompt de Comando" do Windows (procure por "cmd" no
+   menu iniciar).
+2. Entre na pasta do programa. Exemplo, se você copiou para
+   C:\Recesso\recesso-app, digite:
+
+       cd C:\Recesso\recesso-app
+
+3. Instale o PyInstaller (a ferramenta que empacota tudo num
+   único .exe) e as dependências do Recesso:
+
+       py -m pip install -r requirements.txt pyinstaller
+
+4. Gere o app.exe com este comando (copie e cole exatamente
+   assim, tudo numa linha só):
+
+       py -m PyInstaller --onefile --noconsole --name app --add-data "templates;templates" --add-data "static;static" app.py
+
+   O "--noconsole" é o que faz o app.exe rodar SEM abrir nenhuma
+   janela preta — só o navegador abre sozinho, nada mais aparece
+   na tela.
+
+5. Aguarde terminar (pode demorar um pouco). Quando acabar, vai
+   aparecer uma pasta nova chamada "dist" dentro de
+   "recesso-app", e dentro dela o arquivo:
+
+       dist\app.exe
+
+   Esse é o programa pronto — igual ao "app.exe" do banco de
+   horas. Ele já sabe abrir o navegador sozinho.
+
+6. Mova (ou copie) o arquivo "dist\app.exe" para o lugar onde
+   você quer deixá-lo rodando de verdade, por exemplo direto em
+       C:\Recesso\app.exe
+   Pode ser numa pasta separada, sem precisar levar junto as
+   pastas "templates", "static" nem o "app.py" — o .exe já leva
+   tudo isso dentro dele.
+
+7. Para rodar, é só dar dois cliques no "app.exe" — UMA VEZ SÓ
+   (espera uns 3 segundos sem clicar de novo). Não abre nenhuma
+   janela preta; o navegador abre sozinho direto na tela do
+   Recesso, depois de 1 ou 2 segundinhos.
+
+   Se preferir um atalho mais bonito na Área de Trabalho, clique
+   com o botão direito no "app.exe" > "Enviar para" > "Área de
+   trabalho (criar atalho)".
+
+   IMPORTANTE: mesmo sem janela nenhuma aparecendo, o Recesso
+   continua "no ar" rodando por trás, silenciosamente, enquanto
+   o processo estiver ativo. Pra saber se está rodando, ou pra
+   PARAR o sistema, use o Gerenciador de Tarefas (Ctrl+Shift+Esc,
+   aba "Detalhes"): procure "app.exe" e clique em "Finalizar
+   tarefa" se precisar parar. Como não tem janela pra fechar, não
+   tem Ctrl+C — é só pelo Gerenciador de Tarefas mesmo.
+
+   Se der dois cliques sem querer mais de uma vez, não tem
+   problema: o Recesso percebe que já está rodando naquela porta e
+   simplesmente abre o navegador de novo, sem criar um servidor
+   duplicado. É normal aparecer mais de um "app.exe" listado no
+   Gerenciador de Tarefas nesse caso (o PyInstaller sempre usa dois
+   processos por execução, mesmo numa única abertura) — o que
+   importa é que só um servidor de verdade fica no ar.
+
+   Os arquivos "recesso.db" (dados) e "secret.key" são criados do
+   lado de fora do app.exe, na mesma pasta onde ele está (por
+   isso não é preciso rodar de dentro da pasta "recesso-app").
+
+Depois de pronto, você pode pular direto para a seção "4) DESCOBRIR
+O IP DO SERVIDOR" — não precisa fazer nada da opção B.
+
+
+----------------------------------------------------------------
+2B) OPÇÃO B — RODAR COM PYTHON (sem gerar .exe)
+----------------------------------------------------------------
+1. Abra o "Prompt de Comando" do Windows (procure por "cmd" no
+   menu iniciar).
+2. Entre na pasta do programa. Exemplo, se você copiou para
+   C:\Recesso\recesso-app, digite:
+
+       cd C:\Recesso\recesso-app
+
+3. Instale as dependências com este comando (só precisa fazer
+   isso uma vez):
+
+       py -m pip install -r requirements.txt
+
+   Isso baixa e instala o Flask (a "engine" que faz o Recesso
+   funcionar como site).
+
+4. Para rodar, digite:
+
+       py app.py
+
+   (se "py" não funcionar na sua máquina, tente "python app.py").
+   O navegador abre sozinho depois de 1 ou 2 segundos. Se aparecer
+   uma mensagem parecida com esta no Prompt de Comando, deu tudo
+   certo:
+
+  ============================================================
+  Recesso rodando! Acesse pela rede interna em:
+    http://SEU-IP-AQUI:8080
+  ============================================================
+
+IMPORTANTE: enquanto essa janela do Prompt de Comando estiver
+aberta, o Recesso está "no ar". Se você fechar a janela ou
+apertar Ctrl+C, o sistema para de funcionar para todo mundo.
+Por isso, no servidor, o ideal é deixar essa janela sempre
+aberta (ou configurar para rodar automaticamente quando o
+Windows liga — se precisar disso, peça ajuda a alguém de TI
+para configurar como "serviço" do Windows, ou use a OPÇÃO A
+acima com o app.exe, que é mais simples de deixar rodando).
+
+
+----------------------------------------------------------------
+4) DESCOBRIR O IP DO SERVIDOR
+----------------------------------------------------------------
+Para os outros computadores acessarem, eles precisam saber o
+endereço IP deste servidor na rede interna. Para descobrir:
+
+1. No Prompt de Comando do servidor, digite:
+
+       ipconfig
+
+2. Procure a linha "Endereço IPv4" (algo como 192.168.0.50).
+   Esse é o IP fixo do servidor — anote ele.
+
+
+----------------------------------------------------------------
+5) MUDAR A PORTA (OPCIONAL)
+----------------------------------------------------------------
+Por padrão o Recesso usa a porta 8080. Se essa porta já estiver
+sendo usada por outro programa no servidor, você pode trocar.
+
+Se estiver usando o app.exe (OPÇÃO A), abra o Prompt de Comando,
+entre na pasta onde está o app.exe e digite:
+
+       set PORT=9000
+       app.exe
+
+Se estiver usando "python" (OPÇÃO B), digite:
+
+       set PORT=9000
+       py app.py
+
+(troque 9000 pelo número de porta que preferir). Lembre-se de
+usar esse mesmo número depois, no endereço que os diretores vão
+acessar.
+
+
+----------------------------------------------------------------
+6) CRIAR O ATALHO NA ÁREA DE TRABALHO DE CADA DIRETOR
+----------------------------------------------------------------
+Cada diretor vai acessar o Recesso pelo navegador (Chrome, Edge
+etc.), digitando o endereço do servidor. Para facilitar, crie um
+atalho assim:
+
+1. Clique com o botão direito na Área de Trabalho do computador
+   do diretor.
+2. Escolha "Novo" > "Atalho".
+3. No campo de local, digite o endereço do navegador seguido do
+   endereço do servidor, por exemplo:
+
+       http://192.168.0.50:8080
+
+   (troque "192.168.0.50" pelo IP real do seu servidor, que você
+   anotou no passo 4, e "8080" pela porta que você está usando,
+   caso tenha trocado).
+4. Clique em "Avançar", dê um nome tipo "Recesso" e clique em
+   "Concluir".
+5. Se quiser, clique com o botão direito no atalho criado >
+   Propriedades > "Alterar ícone" para deixar mais bonito.
+
+Pronto! Agora é só dar dois cliques no atalho que o navegador
+abre direto na tela do Recesso.
+
+
+----------------------------------------------------------------
+7) PRIMEIRO ACESSO — CRIAR O ADMINISTRADOR
+----------------------------------------------------------------
+Na primeiríssima vez que alguém abrir o endereço do Recesso (com
+o servidor rodando), vai aparecer a tela "Criar administrador".
+É só preencher um usuário e uma senha (mínimo 6 caracteres) — essa
+será a conta principal, que depois pode cadastrar os funcionários,
+lançar as ausências e criar outros usuários (por exemplo, um
+usuário para cada diretor).
+
+Depois que o administrador for criado, todo mundo que abrir o
+endereço vai cair direto na tela de "Entrar" (login normal).
+
+
+----------------------------------------------------------------
+8) ONDE FICAM OS DADOS / COMO FAZER BACKUP
+----------------------------------------------------------------
+Todos os dados (funcionários, ausências, usuários e senhas) ficam
+guardados em um único arquivo, criado automaticamente na primeira
+vez que você roda o programa:
+
+       recesso.db
+
+Se você está usando o app.exe (OPÇÃO A), o "recesso.db" fica na
+mesma pasta onde está o "app.exe". Se está usando "python app.py"
+(OPÇÃO B), ele fica na mesma pasta do "app.py". Para fazer backup,
+basta copiar esse arquivo "recesso.db" para outro lugar (um pen
+drive, uma pasta na nuvem, outro computador) de tempos em tempos.
+Se algo der errado, é só colocar essa cópia de volta na mesma pasta
+(com o mesmo nome "recesso.db") para recuperar tudo.
+
+Existe também um arquivo "secret.key", criado automaticamente na
+primeira vez — ele é só um código interno para manter os logins
+funcionando direito entre reinícios do programa. Não precisa
+mexer nele nem faz parte do backup dos dados.
+
+
+----------------------------------------------------------------
+DÚVIDAS COMUNS
+----------------------------------------------------------------
+- "Apareceu 'python' não é reconhecido como comando..."
+  Tente usar "py" no lugar de "python" (ex: "py app.py"). Se
+  também não funcionar, o Python não está no PATH do Windows —
+  abra o instalador do Python novamente ou peça para alguém de TI
+  ajustar isso. (Isso só afeta a OPÇÃO B — quem usa o app.exe da
+  OPÇÃO A não precisa do Python instalado para RODAR o programa,
+  só para GERAR o .exe uma vez.)
+
+- "O Windows/antivírus avisou que o app.exe é desconhecido/
+  perigoso ao abrir."
+  É normal com programas .exe novos feitos com PyInstaller, que
+  ainda não são "conhecidos" pela Microsoft. Se o aviso for do
+  SmartScreen, clique em "Mais informações" > "Executar assim
+  mesmo". Se o antivírus da empresa bloquear de vez, peça para o
+  TI liberar o arquivo "app.exe" (ele foi gerado por você mesmo,
+  a partir do código do Recesso, não é baixado da internet).
+
+- "A página não abre nos outros computadores."
+  Confira se: (1) o "app.exe" ainda aparece rodando no Gerenciador
+  de Tarefas do servidor (ou, se estiver usando a OPÇÃO B, se o
+  Prompt de Comando com "app.py" ainda está aberto); (2) o IP
+  usado no atalho é o mesmo do servidor; (3) o firewall do Windows
+  Server não está bloqueando a porta (peça ajuda de TI para liberar
+  a porta 8080, ou a que você escolheu, para a rede interna).
+
+- "Dei dois cliques e depois não sei se está rodando (não abre
+  janela nenhuma)."
+  É esperado — o app.exe da OPÇÃO A não mostra nenhuma janela.
+  Abra o Gerenciador de Tarefas (Ctrl+Shift+Esc) > aba "Detalhes"
+  e procure "app.exe" na lista: se aparecer lá, está rodando. Para
+  parar, selecione ele e clique em "Finalizar tarefa".
+
+- "Esqueci a senha do administrador."
+  Se ainda existir outro usuário administrador, ele pode entrar
+  e criar uma nova conta para você na tela "Usuários". Se não
+  houver nenhum outro administrador, será preciso apagar o
+  arquivo "recesso.db" (isso apaga TODOS os dados, cuidado!) e
+  começar do zero, ou pedir ajuda técnica para redefinir a senha
+  direto no banco de dados.
+==================================================================

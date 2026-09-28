@@ -1,0 +1,277 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Recesso</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div id="app">
+
+  <!-- ================= AUTH ================= -->
+  <div id="authScreen" class="center-wrap">
+    <div id="authLoading" class="auth-card" style="text-align:center;">
+      <div class="brand" style="justify-content:center; margin-bottom:8px;">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg>
+        </div>
+        <div style="text-align:left;">
+          <div class="brand-name">Recesso</div>
+          <div class="brand-sub">Férias &amp; ausências</div>
+        </div>
+      </div>
+      <p class="auth-desc" style="margin-top:10px;">Carregando…</p>
+    </div>
+
+    <form id="setupCard" class="auth-card" hidden novalidate>
+      <div class="brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg>
+        </div>
+        <div>
+          <div class="brand-name">Recesso</div>
+          <div class="brand-sub">Férias &amp; ausências</div>
+        </div>
+      </div>
+      <div class="auth-title">Criar administrador</div>
+      <p class="auth-desc">Primeiro acesso: crie a conta que vai administrar funcionários, ausências e outros usuários.</p>
+      <div id="setupError" class="form-error"></div>
+      <div class="field">
+        <label for="setupUsername">Usuário</label>
+        <input id="setupUsername" type="text" autocomplete="username" placeholder="ex: admin" required>
+      </div>
+      <div class="field">
+        <label for="setupPassword">Senha</label>
+        <input id="setupPassword" type="password" autocomplete="new-password" placeholder="Mínimo 6 caracteres" required minlength="6">
+      </div>
+      <div class="field">
+        <label for="setupPassword2">Confirmar senha</label>
+        <input id="setupPassword2" type="password" autocomplete="new-password" required minlength="6">
+      </div>
+      <button type="submit" class="btn btn-primary">Criar administrador e entrar</button>
+    </form>
+
+    <form id="loginCard" class="auth-card" hidden novalidate>
+      <div class="brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg>
+        </div>
+        <div>
+          <div class="brand-name">Recesso</div>
+          <div class="brand-sub">Férias &amp; ausências</div>
+        </div>
+      </div>
+      <div class="auth-title">Entrar</div>
+      <p class="auth-desc">Acesse com seu usuário e senha cadastrados.</p>
+      <div id="loginError" class="form-error"></div>
+      <div class="field">
+        <label for="loginUsername">Usuário</label>
+        <input id="loginUsername" type="text" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="loginPassword">Senha</label>
+        <input id="loginPassword" type="password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Entrar</button>
+    </form>
+  </div>
+
+  <!-- ================= APP SHELL ================= -->
+  <button id="menuToggle" class="menu-toggle" aria-label="Abrir menu">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+  </button>
+  <div id="backdrop" class="backdrop"></div>
+
+  <div id="mainShell" hidden>
+    <aside id="sidebar" class="sidebar">
+      <div class="side-brand brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg>
+        </div>
+        <div>
+          <div class="brand-name">Recesso</div>
+          <div class="brand-sub">Férias &amp; ausências</div>
+        </div>
+      </div>
+      <nav class="side-nav" id="sideNav">
+        <button class="nav-item" data-view="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="16" width="7" height="5" rx="1.5"></rect></svg>
+          Painel
+        </button>
+        <button class="nav-item" data-view="employees">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"></path><circle cx="10" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          Funcionários
+        </button>
+        <button class="nav-item" data-view="leaves">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18"></path><path d="M8 3v4"></path><path d="M16 3v4"></path><path d="M8 15l2 2 4-4"></path></svg>
+          Ausências
+        </button>
+        <button class="nav-item" data-view="users" id="navUsers">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path><path d="M19 8h3M20.5 6.5v3"></path></svg>
+          Usuários
+        </button>
+      </nav>
+      <div class="side-spacer"></div>
+      <div class="side-user">
+        <div class="avatar" id="sideAvatar">?</div>
+        <div class="side-user-info">
+          <div class="side-user-name" id="sideUserName">—</div>
+          <div class="side-user-role" id="sideUserRole">—</div>
+        </div>
+        <button class="logout-btn" id="logoutBtn" title="Sair" aria-label="Sair">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <!-- Dashboard -->
+      <section id="view-dashboard" class="view" hidden>
+        <div class="topbar">
+          <div>
+            <h1>Painel</h1>
+            <p id="dashDateLine">—</p>
+          </div>
+        </div>
+        <div class="stat-grid" id="statGrid"></div>
+        <div class="two-col">
+          <div class="panel">
+            <h3>Fora hoje</h3>
+            <p class="panel-sub">Funcionários de férias, folga ou ausentes na data de hoje</p>
+            <div id="todayList"></div>
+          </div>
+          <div class="panel">
+            <h3>Últimos registros</h3>
+            <p class="panel-sub">Ausências lançadas mais recentemente</p>
+            <div id="recentList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Employees -->
+      <section id="view-employees" class="view" hidden>
+        <div class="topbar">
+          <div>
+            <h1>Funcionários</h1>
+            <p id="empCountLine">—</p>
+          </div>
+          <button class="btn btn-primary" id="addEmployeeBtn" style="width:auto;">+ Novo funcionário</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Nome</th><th>Cargo</th><th>Departamento</th><th>Admissão</th><th>Dias/ano</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody id="employeesBody"></tbody>
+          </table>
+        </div>
+        <div id="employeesEmpty" class="empty-state" hidden>Nenhum funcionário cadastrado ainda.</div>
+      </section>
+
+      <!-- Leaves -->
+      <section id="view-leaves" class="view" hidden>
+        <div class="topbar">
+          <div>
+            <h1>Ausências</h1>
+            <p id="leavesLine">—</p>
+          </div>
+          <div class="toolbar-actions">
+            <button class="btn btn-ghost btn-sm" id="exportCsvBtn">Exportar CSV</button>
+            <button class="btn btn-primary" id="addLeaveBtn" style="width:auto;">+ Novo registro</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="toolbar">
+            <div class="filter-group">
+              <div class="filter-field">
+                <label for="filterMonth">Mês</label>
+                <select id="filterMonth"></select>
+              </div>
+              <div class="filter-field">
+                <label for="filterYear">Ano</label>
+                <input id="filterYear" type="number" class="tabular">
+              </div>
+              <div class="filter-field">
+                <label for="filterEmployee">Funcionário</label>
+                <select id="filterEmployee"><option value="">Todos</option></select>
+              </div>
+              <div class="filter-field">
+                <label for="filterType">Tipo</label>
+                <select id="filterType">
+                  <option value="">Todos</option>
+                  <option value="ferias">Férias</option>
+                  <option value="folga">Folga</option>
+                  <option value="atestado">Atestado</option>
+                  <option value="falta">Falta</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="panel">
+            <h3 id="calTitle">—</h3>
+            <p class="panel-sub" id="calSub">—</p>
+            <div class="cal-grid" id="calGrid"></div>
+            <div class="legend">
+              <div class="legend-item"><span class="legend-dot" style="background:var(--accent-strong)"></span>Férias</div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--warning)"></span>Folga</div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--info)"></span>Atestado</div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--danger)"></span>Falta</div>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Saldo de férias — <span id="balanceYear">—</span></h3>
+            <p class="panel-sub">30 dias por ano, salvo funcionários com outro limite cadastrado</p>
+            <div id="balanceList"></div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Funcionário</th><th>Tipo</th><th>Período</th><th>Dias</th><th>Motivo</th><th></th></tr>
+            </thead>
+            <tbody id="leavesBody"></tbody>
+          </table>
+        </div>
+        <div id="leavesEmpty" class="empty-state" hidden>Nenhum registro para esse filtro.</div>
+      </section>
+
+      <!-- Users -->
+      <section id="view-users" class="view" hidden>
+        <div class="topbar">
+          <div>
+            <h1>Usuários</h1>
+            <p>Quem pode acessar e administrar o Recesso</p>
+          </div>
+          <button class="btn btn-primary" id="addUserBtn" style="width:auto;">+ Novo usuário</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Usuário</th><th>Perfil</th><th>Criado em</th><th></th></tr>
+            </thead>
+            <tbody id="usersBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modalBackdrop" class="modal-backdrop" hidden>
+    <div class="modal-box" id="modalBox" role="dialog" aria-modal="true">
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+</div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
